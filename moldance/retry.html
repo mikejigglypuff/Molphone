@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>게임오버</title>
+    <style>
+        * { padding: 0; margin: 0; }
+        canvas { background: #eee; display: block; margin: 0 auto; }
+    </style>
+</head>
+<body>
+    <canvas id="myCanvas" width="1024" height="768"></canvas>
+    <script>
+        var result = sessionStorage.getItem('saveData');
+        var final_score = sessionStorage.getItem('score');
+        var canvas = document.getElementById("myCanvas");
+        var ctx = canvas.getContext("2d");
+        var textX = 512;
+        var textY = 384;
+        var rbuttonX = 670;
+        var rbuttonY = 650;
+        var rbuttonW = 100;
+        var rbuttonH = 80;
+
+        document.addEventListener("mousedown", MouseDownHandler, false);
+
+        function MouseDownHandler(e){
+            var canvas_rect = canvas.getBoundingClientRect();
+            const x = e.clientX - canvas_rect.left;
+            const y = e.clientY - canvas_rect.top;
+            console.log("X: " + x + " Y: " + y);
+            if(x >= rbuttonX && x <= rbuttonX + rbuttonW && y >= rbuttonY && y <= rbuttonY + rbuttonH){
+                console.log("pressed");
+                location.href = "start.html";
+            }
+            else {console.log("not pressed");}
+        }
+
+        function drawtext() {
+            ctx.font = "24px Arial";
+            ctx.textAlign = "center";
+            ctx.fillStyle = "#000000";
+            ctx.fillText("게임 오버", textX, textY);
+            ctx.font = "20px Arial";
+            ctx.fillText("점수: " + String(final_score), textX, textY + 30);
+            ctx.fillText("사인: " + result, textX, textY + 60);
+            ctx.fillText("다시", rbuttonX + (rbuttonW / 2), rbuttonY + (rbuttonH / 2));
+        }
+
+        function drawrect(){
+                ctx.strokeRect(rbuttonX, rbuttonY, rbuttonW, rbuttonH);
+        }
+
+        drawtext();
+        drawrect();
+    </script>
+</body>
+</html>

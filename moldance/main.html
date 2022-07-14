@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>몰래춤추기</title>
+        <style>
+            * { padding: 0; margin: 0; }
+            canvas { background: #eee; display: block; margin: 0 auto; }
+        </style>
+    </head>
+    <body>
+        <canvas id="myCanvas" width="1024" height="768"></canvas>
+        <script>
+            var canvas = document.getElementById("myCanvas");
+            var ctx = canvas.getContext("2d");
+            var frobac = 1; //front == 1, back == -1
+            var maxdelay = 30;
+            var delay = 30;
+            var reverse_min = 3;
+            var reverse_max = 10;
+            var rand = Math.floor((Math.random() * (reverse_max - reverse_min) + reverse_min) * delay);
+            var funny = 300;
+            var funnyX = 30;
+            var funnyY = 30;
+            var funnyW = 700;
+            var funnyH = 30;
+            var maxfunny = 300;
+            var funny_incr = 3;
+            var item_num = 3;
+            var item_funny = 0.03;
+            var item_maxdur = 20;
+            var item_dur = 20;
+            var item_used = false;
+            var item_able = true;
+            var caught = false;
+            var score = 0;
+            var scoreX = 800;
+            var scoreY = 80;
+            var spacePressed = false;
+            var zPressed = false;
+            var zTookoff = true;
+            var teacherX = 400;
+            var teacherY = 100;
+            var teacherW = 100;
+            var teacherH = 100;
+            var playerX = 400;
+            var playerY = 500;
+            var playerW = 100;
+            var playerH = 100;
+            var itemX = 30;
+            var itemY = 100;
+            var itemW = 50;
+            var itemH = 50;
+            var item_interval = 20;
+            
+
+            document.addEventListener("keydown", keyDownHandler, false);
+            document.addEventListener("keyup", keyUpHandler, false);
+
+            function keyDownHandler(e) {
+                if(e.keyCode == 32) {
+                    spacePressed = true;
+                    caughtDetection();
+                }
+                else if(e.keyCode == 90) {
+                    zPressed = true;
+                    zTookoff = false;
+                    useitem();
+                }
+            }
+
+            function keyUpHandler(e) {
+                if(e.keyCode == 32) {
+                    spacePressed = false;
+                }
+                else if(e.keyCode == 90) {
+                    zPressed = false;
+                    zTookoff = true;
+                    item_able = true;
+                }
+            }
+
+            function useitem() {
+                if(item_num > 0 && item_able) {
+                    item_num--;
+                    item_able = false;
+                    item_used = true;
+                }
+
+                
+            }
+
+            function caughtDetection() {
+                if(spacePressed && frobac == 1) {
+                    sessionStorage.saveData = "caught";
+                    sessionStorage.score = score;
+                    location.href = "retry.html";
+                }
+            }
+            
+            function drawTeacher() {
+                ctx.beginPath();
+                ctx.rect(teacherX, teacherY, teacherW, teacherH);
+                ctx.fillStyle = "#19CFDD";
+                ctx.fill();
+                ctx.closePath();
+                ctx.font = "16px Arial";
+                ctx.fillStyle = "#000000";
+                ctx.fillText("frobac: " + frobac, teacherX, teacherY);
+                ctx.fillText("rand: " + rand, teacherX, teacherY + 20);
+                ctx.fillText("delay: " + delay, teacherX, teacherY + 40);
+            }
+
+            function drawplayer() {
+                ctx.beginPath();
+                ctx.rect(playerX, playerY, playerW, playerH);
+                ctx.fillStyle = "#0095DD";
+                ctx.fill();
+                ctx.closePath();
+                ctx.font = "16px Arial";
+                ctx.fillStyle = "#000000";
+                ctx.fillText("Space: " + spacePressed, playerX, playerY);
+                ctx.fillText("Zpressed: " + zPressed, playerX, playerY + 20);
+                ctx.fillText("Ztookoff: " + zTookoff, playerX, playerY + 40);
+            }
+
+            function drawscores() {
+                ctx.font = "16px Arial";
+                ctx.fillStyle = "#000000";
+                ctx.textAlign = "right";
+                ctx.fillText("Score: " + score, scoreX, scoreY);
+                ctx.beginPath();
+                ctx.rect(funnyX, funnyY, funnyW * (funny / maxfunny), funnyH);
+                ctx.fillStyle = "013ADF";
+                ctx.fill();
+                ctx.closePath();
+            }
+
+            function drawitems() {
+                for(var i = 0; i < item_num; i++) {
+                    ctx.beginPath();
+                    var y = itemY + (itemH + item_interval) * i;
+                    ctx.rect(itemX, y, itemW, itemH);
+                    ctx,fillStyle = "000000";
+                    ctx.fill();
+                    ctx.closePath();
+                }
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                drawTeacher();
+                drawplayer();
+                drawscores();
+                drawitems();
+
+                if(rand > 0) {
+                    rand--;
+                }
+                else if(delay > 0) {
+                    delay--;
+                }
+                else {
+                    delay = maxdelay;
+                    frobac *= -1;
+                    rand = Math.floor((Math.random() * (reverse_max - reverse_min) + reverse_min) * delay);
+                }
+                
+                if(item_used && item_dur > 0) {
+                    item_dur--;
+                    funny = Math.min(funny + funny_incr, maxfunny);
+                }
+                else if(item_used && item_dur <= 0) {
+                    item_used = false;
+                    item_dur = item_maxdur;
+                }
+                else if(spacePressed) {
+                    funny = Math.min(funny + funny_incr, maxfunny);
+                }
+
+                funny--;
+                score++;
+                
+                if(funny < 0) {
+                    sessionStorage.saveData = "bored";
+                    sessionStorage.score = score;
+                    location.href = "retry.html";
+                }
+                else {
+                    requestAnimationFrame(draw);
+                }
+            }
+
+            draw();
+
+        </script>
+    </body>
+</html>

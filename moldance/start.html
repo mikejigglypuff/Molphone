@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>연습</title>
+        <style>
+            * { padding: 0; margin: 0; }
+            canvas { background: #eee; display: block; margin: 0 auto; }
+        </style>
+    </head>
+    <body>
+        <canvas id="myCanvas" width="1024" height="768"></canvas>
+        <script>
+            var canvas = document.getElementById("myCanvas");
+            var ctx = canvas.getContext("2d");
+            var sbuttonX = 870;
+            var sbuttonY = 500;
+            var sbuttonW = 100;
+            var sbuttonH = 80;
+            var dtextX = 100;
+            var dtextY = 550;
+
+            document.addEventListener("mousedown", MouseDownHandler, false);
+
+            function MouseDownHandler(e){
+                var canvas_rect = canvas.getBoundingClientRect();
+                const x = e.clientX - canvas_rect.left;
+                const y = e.clientY - canvas_rect.top;
+                console.log("X: " + x + " Y: " + y);
+                if(x >= sbuttonX && x <= sbuttonX + sbuttonW && y >= sbuttonY && y <= sbuttonY + sbuttonH){
+                    console.log("pressed");
+                    location.href = "main.html";
+                }
+                else {console.log("not pressed");}
+            }
+
+            function drawtext(){
+                ctx.font = "20px Arial";
+                ctx.textAlign = "center";
+                ctx.fillStyle = "#0095DD";
+                ctx.fillText("시작", sbuttonX + (sbuttonW / 2), sbuttonY + (sbuttonH / 2));
+                ctx.textAlign = "start";
+                ctx.fillText("춤추기 스페이스바\n아이템 사용 Z키", dtextX, dtextY);
+            }
+
+            function drawrect(){
+                ctx.strokeRect(sbuttonX, sbuttonY, sbuttonW, sbuttonH);
+            }
+
+            drawtext();
+            drawrect();
+
+        </script>
+    </body>
+</html>
